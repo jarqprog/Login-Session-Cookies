@@ -50,28 +50,31 @@ public class MainHandler implements HttpHandler {
 
         if (method.equals("POST")) {
             switch (uri) {
-                case "/":
-                    captureData(httpExchange);
+                case "/login":
+                    handleLogin(httpExchange);
                     break;
             }
         }
     }
 
-    private void captureData(HttpExchange httpExchange) throws IOException {
-
+    private void handleLogin(HttpExchange httpExchange) throws IOException {
+        Map<String,String> loginData = getInput(httpExchange);
+        String userLogin = loginData.get("login");
+        String userPassword = loginData.get("password");
+        System.out.println(
+                "Login&password: " + userLogin + " | " + userPassword);  // password isn't used
+        sessionManager.register(httpExchange, userLogin);  // assume login is successful
+        redirectToMainPage(httpExchange);
     }
 
     private void renderLogin(HttpExchange httpExchange) throws IOException {
-
+        sessionManager.remove(httpExchange);  // removes current session (if session exists)
         JtwigTemplate template = JtwigTemplate.classpathTemplate("/static/login.html");
 
         // create a model that will be passed to a template
         JtwigModel model = JtwigModel.newModel();
-
-
         // render a template to a string
         String response = template.render(model);
-
         sendResponse(httpExchange, response);
     }
 
@@ -126,6 +129,13 @@ public class MainHandler implements HttpHandler {
     private void redirectToLogin(HttpExchange httpExchange) throws IOException {
         Headers responseHeaders = httpExchange.getResponseHeaders();
         responseHeaders.add("Location", "/login");
+        httpExchange.sendResponseHeaders(302, -1);
+        httpExchange.close();
+    }
+
+    private void redirectToMainPage(HttpExchange httpExchange) throws IOException {
+        Headers responseHeaders = httpExchange.getResponseHeaders();
+        responseHeaders.add("Location", "/");
         httpExchange.sendResponseHeaders(302, -1);
         httpExchange.close();
     }

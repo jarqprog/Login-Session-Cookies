@@ -12,19 +12,17 @@
 
 
 <main class="container">
-        {%for message in messages%}
-            <div class="message">
-            {% for element in message %}
-                <div class="inner-message">{{ element }}</div>
-            {% endfor %}
-            </div>
-        {%endfor%}
+
+    <h1>Log in</h1>
+    <form method="post">
+        <input type="text" name="login" placeholder="Enter login" required>
+        <br/><br/>
+        <input type="password" name="password" placeholder="Enter password" required>
+        <br/><br/>
+        <input type="submit" value="Log in">
+    </form>
+
 </main>
-
-<footer class="container">
-    <div class="belt">COPYRIGHT &copy; 2018 GuestBook by jq</div>
-</footer>
-
 
 </body>
 </html>

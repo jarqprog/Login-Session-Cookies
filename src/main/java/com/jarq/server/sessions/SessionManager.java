@@ -9,6 +9,7 @@ public class SessionManager implements ISessionManager {
     private Map<String,Calendar> sessions;
     private static ISessionManager instance;
     private final long sessionExpirationTime;  // in milliseconds (recommended: 300000)
+    private final String expiredStatus = "expired";
 
     // singleton:
     public static ISessionManager create(long sessionExpirationTime) {
@@ -25,29 +26,21 @@ public class SessionManager implements ISessionManager {
 
     @Override
     public String getCurrentUserName(HttpExchange httpExchange) throws SessionException {
-        deleteExpired();  // remove old sessions
+        System.out.println("number of removed old sessions: " + deleteExpired());  // remove old sessions
         String invalidSessionInfo = "User hasn't valid session";
 
-        return "Jarek";
-
-//        try {
-//            String sessionToken = extractToken(httpExchange);
-//
-//            if( (! sessionToken.contains("deleted") ) && isLogged(httpExchange)) {
-//                sessions.put(sessionToken, Calendar.getInstance());  // time has been updated (session is current)
-//
-//                String splitRegex = "==";
-//                int idIndex = 1;
-//
-////                return Integer.parseInt(sessionToken.split(splitRegex)[idIndex]);
-//                return "Jarek";
-//            }
-//            else {
-//                throw new SessionException(invalidSessionInfo);
-//            }
-//        } catch (Exception notUsed) {
-//            throw new SessionException(invalidSessionInfo);
-//        }
+        try {
+            if( ! isExpired(httpExchange) && isLogged(httpExchange) ) {
+                String sessionToken = extractToken(httpExchange);
+                sessions.put(sessionToken, Calendar.getInstance());  // time has been updated (session is current)
+                return extractLoginFromSessionToken(sessionToken);
+            }
+            else {
+                throw new SessionException(invalidSessionInfo);
+            }
+        } catch (Exception notUsed) {
+            throw new SessionException(invalidSessionInfo);
+        }
     }
 
     @Override
@@ -55,7 +48,7 @@ public class SessionManager implements ISessionManager {
         try {
             String sessionToken = extractToken(he);
             sessions.remove(sessionToken);
-            he.getResponseHeaders().set("Set-Cookie", "sessionToken=deleted");
+            he.getResponseHeaders().set("Set-Cookie", "sessionToken="+expiredStatus);
             return true;
         } catch (SessionException notUsed) {
             return false;
@@ -75,7 +68,7 @@ public class SessionManager implements ISessionManager {
         return true;
     }
 
-    private int deleteExpired() {
+    private int deleteExpired() {  // will implement iterator for this method
         Map<String,Calendar> copy = new HashMap<>();  // copy to avoid ConcurrentModificationException
         int sessionsDeleted = 0;
         long timeNow = Calendar.getInstance().getTimeInMillis();
@@ -119,5 +112,16 @@ public class SessionManager implements ISessionManager {
         } catch (Exception notUsed) {
             throw new SessionException();
         }
+    }
+
+    private String extractLoginFromSessionToken(String sessionToken) {
+        String splitRegex = "==";
+        int loginIndex = 1;
+        return sessionToken.split(splitRegex)[loginIndex];
+    }
+
+    private boolean isExpired(HttpExchange httpExchange) throws SessionException {
+        String sessionToken = extractToken(httpExchange);
+        return sessionToken.contains(expiredStatus);
     }
 }
