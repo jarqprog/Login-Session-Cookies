@@ -1,0 +1,97 @@
+h1 {
+    margin-bottom: 20px;
+    margin-top: 20px;
+    font-size: 250%;
+    font-weight: bold;
+}
+
+a {
+    text-decoration: none;
+    color: firebrick;
+}
+
+body {
+    font-family: 'Raleway', sans-serif;
+    color: antiquewhite;
+    background: black;
+    font-size: 80%;
+    min-width: 400px;
+    min-height: 300px;
+    height: 100%;
+    width: 100%;
+}
+
+.container {
+    padding-left: 3%;
+    padding-right: 3%;
+}
+
+#title {
+    font-size: 300%;
+    font-weight: bold;
+    float: left;
+    color: white;
+    width: auto;
+}
+
+.nav-button {
+    clear: both;
+    display: block;
+    font-size: larger;
+    font-weight: bold;
+    padding: 15px;
+}
+
+.nav-button:hover {
+    font-size: large;
+    text-decoration: none;
+}
+
+main {
+    clear: both;
+    max-height: 80vh;
+    width: 90%;
+    overflow-y: auto;
+    overflow-scrolling: auto;
+    margin-bottom: 5px;
+    text-align: center;
+    align-content: center;
+}
+
+
+#subtitle {
+    width: 90vh;
+}
+
+input[type=text],
+input[type=submit] {
+    margin-top: 30px;
+    width: 40vh;
+    background-color: black;
+    font-size: 120%;
+    font-weight: bold;
+    color: antiquewhite;
+    text-align: center;
+    padding: 5px 20px 5px 5px;
+    border-radius: 5px;
+    border-color: firebrick;
+}
+
+input[type=submit] {
+    color: grey;
+}
+
+input[type=text]:hover,
+input[type=submit]:hover {
+    color: white;
+    font-weight: bolder;
+    border-radius: 10px;
+    border-width: 1px;
+}
+
+.right-form {
+    clear: both;
+    text-align: right;
+    align-content: right;
+    display: block;
+}
